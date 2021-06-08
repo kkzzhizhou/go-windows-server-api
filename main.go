@@ -1,16 +1,17 @@
 /*
  * @Author: zzz
  * @Date: 2021-06-08 12:04:38
- * @LastEditTime: 2021-06-08 17:41:32
+ * @LastEditTime: 2021-06-08 21:29:42
  * @LastEditors: zzz
  * @Description: 提供Windows Server API
- * @FilePath: \WinServerAPI\main.go
+ * @FilePath: \go-windows-server-api\main.go
  */
 
 package main
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"net/http"
 	"os/exec"
@@ -44,13 +45,18 @@ func (p *powerShell) execute(args ...string) (stdOut string, stdErr string, err 
 	return
 }
 
-// var db = make(map[string]string)
-
 func setupRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
-
+	r.GET("favicon.ico", func(c *gin.Context) {
+		file, _ := favicon.ReadFile("icon.ico")
+		c.Data(
+			http.StatusOK,
+			"image/x-icon",
+			file,
+		)
+	})
 	// Ping test
 	r.GET("/flushdns", func(c *gin.Context) {
 		pwsh := new()
@@ -68,17 +74,20 @@ func setupRouter() *gin.Engine {
 	return r
 }
 
+//go:embed icon.ico
+var favicon embed.FS
+
 func main() {
 	gin.SetMode(gin.ReleaseMode)
-	c := exec.Command("cmd", "/C", "Title", "Windows Server AP")
+	c := exec.Command("cmd", "/C", "Title", "Windows Server API")
 	if err := c.Run(); err != nil {
 		fmt.Println("Error: ", err)
 	}
+
 	fmt.Println(hello.Greet())
 	fmt.Println("作者: zzz")
 	fmt.Println("说明: 在Windows Server上提供一些API接口，例如刷新DNS缓存等")
 	fmt.Println("使用: http://ip:5000/flushdns // 刷新DNS缓存")
 	r := setupRouter()
-	// Listen and Server in 0.0.0.0:8080
 	r.Run(":5000")
 }
