@@ -1,7 +1,7 @@
 /*
  * @Author: zzz
  * @Date: 2021-06-08 12:04:38
- * @LastEditTime: 2021-06-08 17:24:37
+ * @LastEditTime: 2021-06-08 17:41:32
  * @LastEditors: zzz
  * @Description: 提供Windows Server API
  * @FilePath: \WinServerAPI\main.go
@@ -19,18 +19,18 @@ import (
 	"github.com/kkzzhizhou/go-windows-server-api/hello"
 )
 
-type PowerShell struct {
-	powerShell string
+type powerShell struct {
+	powerShell string // 定义powershell
 }
 
-func New() *PowerShell {
+func new() *powerShell {
 	ps, _ := exec.LookPath("powershell.exe")
-	return &PowerShell{
+	return &powerShell{
 		powerShell: ps,
 	}
 }
 
-func (p *PowerShell) Execute(args ...string) (stdOut string, stdErr string, err error) {
+func (p *powerShell) execute(args ...string) (stdOut string, stdErr string, err error) {
 	args = append([]string{"-NoProfile", "-NonInteractive"}, args...)
 	cmd := exec.Command(p.powerShell, args...)
 
@@ -53,8 +53,8 @@ func setupRouter() *gin.Engine {
 
 	// Ping test
 	r.GET("/flushdns", func(c *gin.Context) {
-		pwsh := New()
-		stdout, stderr, err := pwsh.Execute("[Console]::OutputEncoding = [Text.Encoding]::UTF8; Clear-DnsServerCache -Force")
+		pwsh := new()
+		stdout, stderr, err := pwsh.execute("[Console]::OutputEncoding = [Text.Encoding]::UTF8; Clear-DnsServerCache -Force")
 		if err != nil {
 			c.String(http.StatusOK, "flush failed.")
 			// fmt.Println(err)
