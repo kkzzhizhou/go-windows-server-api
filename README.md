@@ -6,6 +6,6 @@ go-windows-server-api
 
 将PowerShell、CMD命令转换成Web API
 
-# 特征
+# 特性
 
 - /flushdns:刷新DNS服务器
