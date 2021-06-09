@@ -1,7 +1,7 @@
 /*
  * @Author: zzz
  * @Date: 2021-06-08 12:04:38
- * @LastEditTime: 2021-06-08 21:29:42
+ * @LastEditTime: 2021-06-09 08:20:27
  * @LastEditors: zzz
  * @Description: 提供Windows Server API
  * @FilePath: \go-windows-server-api\main.go
@@ -62,12 +62,10 @@ func setupRouter() *gin.Engine {
 		pwsh := new()
 		stdout, stderr, err := pwsh.execute("[Console]::OutputEncoding = [Text.Encoding]::UTF8; Clear-DnsServerCache -Force")
 		if err != nil {
-			c.String(http.StatusOK, "flush failed.")
-			// fmt.Println(err)
+			c.JSON(404, gin.H{"status": "flush failed", "reason": stderr})
 		} else {
-			fmt.Println(stderr)
 			fmt.Println(stdout)
-			c.String(http.StatusOK, "flush finish.")
+			c.JSON(200, gin.H{"status": "flush finish", "content": stdout})
 		}
 	})
 
